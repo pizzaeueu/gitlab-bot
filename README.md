@@ -4,7 +4,7 @@ Bot which integrates git lab with slack
 ## Features
 - Automatic assign teammates on new merge requests
 - Send slack notification for new merge request
-- Yet another playgrund with scala / zio ecosystem
+- Yet another playground with scala / zio ecosystem
 
 ## Set Up Standalone 
 - Fill [properies](https://github.com/pizzaeueu/gitlab-bot/blob/master/src/main/resources/application.conf) with approperiate values

@@ -32,7 +32,7 @@ case class JobLive(
   yield ()
 
   private def assign(mrInfo: MRInfo): Task[(MRInfo, List[Teammate])] = for
-    assignees <- assigneesHandler.chooseAssignees()
+    assignees <- assigneesHandler.chooseAssignees(mrInfo.author)
     _         <- gitLabService.assignToMr(mrInfo, assignees)
   yield (mrInfo, assignees)
 

@@ -40,8 +40,8 @@ object Main extends ZIOAppDefault:
         SlackClient.live,
         ChannelFactory.auto,
         EventLoopGroup.auto(),
-        RoundRobinAssigneesHandler.roundRobinHandler,
-        ZRef.make[Option[Teammate]](None).toLayer,
+        RandomAssigneesHandler.randomHandler,
+        ZRef.make[List[Teammate]](List.empty).toLayer,
         MessageBuilder.live,
       )
 

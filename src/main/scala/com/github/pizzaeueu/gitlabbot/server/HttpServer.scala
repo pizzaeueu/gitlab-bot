@@ -14,7 +14,7 @@ trait HttpServer {
 case class ServerLive(appConfig: AppConfig, mergeRequestController: JobController) extends HttpServer {
   override def start: Task[ExitCode] =
     Server(mergeRequestController.build())
-      .withPort(9003)
+      .withPort(appConfig.httpServer.port)
       .withMaxRequestSize(10000)
       .make
       .flatMap(start => ZManaged.succeed(println(s"Server started on port: ${start.port}")))

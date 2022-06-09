@@ -15,13 +15,14 @@ case class RandomAssigneesHandler(appConfig: AppConfig, ref: Ref[List[Teammate]]
       getRandomAssignees(
         appConfig.team.usernames
           .filterNot(teammates.toSet)
-          .filterNot(_.username == gitLabUser.username)
+          .filterNot(_.username == gitLabUser.username),
+        amount = appConfig.team.amount
       )
     )
   yield assigners
 
-  private def getRandomAssignees(team: List[Teammate]): List[Teammate] =
-    util.Random.shuffle(team).take(2)
+  private def getRandomAssignees(team: List[Teammate], amount: Int): List[Teammate] =
+    util.Random.shuffle(team).take(amount)
 }
 
 object RandomAssigneesHandler extends Accessible[RandomAssigneesHandler] {

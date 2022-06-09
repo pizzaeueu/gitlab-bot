@@ -23,7 +23,7 @@ object AssigneesHandlerSpec extends DefaultRunnableSpec {
     HttpServerConfig("localhost", 8080),
     SlackConfig(Password("test"), "api.url", "/messagePath", "channel"),
     GitLabConfig("api.url", "/projectPath", "/mergeRequestPath", List.empty),
-    TeamConfig(teammates),
+    TeamConfig(teammates, 2),
   )
 
   def spec: ZSpec[Environment, Failure] = suite("RandomAssigneesHandler")(

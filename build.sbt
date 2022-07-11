@@ -2,6 +2,14 @@ import sbt.Keys.libraryDependencies
 
 ThisBuild / scalaVersion := "3.1.3"
 
+ThisBuild / scalacOptions ++= Seq(
+  "-deprecation",         // emit warning and location for usages of deprecated APIs
+  "-explain",             // explain errors in more detail
+  "-explain-types",       // explain type errors in more detail
+  "-feature",             // emit warning and location for usages of features that should be imported explicitly
+  "-unchecked",           // enable additional warnings where generated code depends on assumptions
+)
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val root = (project in file("."))

@@ -34,5 +34,5 @@ case class MessageBuilderLive(appConfig: AppConfig) extends MessageBuilder {
 }
 
 object MessageBuilder {
-  def live: RLayer[AppConfig, MessageBuilder] = (MessageBuilderLive.apply _).toLayer
+  def live: RLayer[AppConfig, MessageBuilder] = ZLayer.fromFunction(MessageBuilderLive.apply)
 }

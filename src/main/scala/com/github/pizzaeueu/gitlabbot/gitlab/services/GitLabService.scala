@@ -37,5 +37,5 @@ case class GitLabServiceLive(appConfig: AppConfig, client: GitLabClient) extends
   private def predicateFor(mr: MRInfo) =
     !mr.title.toLowerCase.startsWith("draft") && mr.state == MrState.opened
 
-object GitLabService extends Accessible[GitLabService]:
-  def live: RLayer[AppConfig & GitLabClient, GitLabService] = (GitLabServiceLive.apply _).toLayer
+object GitLabService:
+  def live: RLayer[AppConfig & GitLabClient, GitLabService] = ZLayer.fromFunction(GitLabServiceLive.apply)

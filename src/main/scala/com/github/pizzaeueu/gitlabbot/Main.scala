@@ -23,13 +23,8 @@ import java.io.IOException
 
 object Main extends ZIOAppDefault:
 
-  // override def hook: RuntimeConfigAspect = console(
-  //   logLevel = LogLevel.Debug,
-  //   format = LogFormat.bracketed(LogFormat.colored),
-  // )
-
   override def run =
-    printConfig.provide(Config.live) *>
+    printConfig.provide(Config.live, logging.removeDefaultLoggers, logging.console()) *>
       ZIO.serviceWithZIO[HttpServer](_.start).provide(
         JobController.live,
         HttpServer.live,
@@ -43,6 +38,8 @@ object Main extends ZIOAppDefault:
         RandomAssigneesHandler.randomHandler,
         ZLayer.fromZIO(Ref.make[List[Teammate]](List.empty)),
         MessageBuilder.live,
+        logging.removeDefaultLoggers,
+        logging.console()
       )
 
   def printConfig: ZIO[AppConfig, IOException, Unit] = for

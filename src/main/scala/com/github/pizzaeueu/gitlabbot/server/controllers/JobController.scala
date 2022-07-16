@@ -16,12 +16,12 @@ case class JobControllerLiveControllerLive(job: Job) extends JobController {
       for
         _ <- ZIO.logDebug("run-apply-assignees was started through API...")
         _ <- job.assignFreeMrs.forkDaemon
-      yield Response.status(Status.OK)
+      yield Response.status(Status.Ok)
   }
 
   override def build(): HttpApp[Any, Nothing] = server
 }
 
-object JobController extends Accessible[JobController] {
-  def live: RLayer[Job, JobController] = (JobControllerLiveControllerLive.apply _).toLayer
+object JobController {
+  def live: RLayer[Job, JobController] = ZLayer.fromFunction(JobControllerLiveControllerLive.apply _)
 }

@@ -34,5 +34,5 @@ case class SlackClientLive(appConfig: AppConfig, factory: ChannelFactory, eventL
     _   <- ZIO.logInfo("Message was successfully sent")
   yield ()
 
-object SlackClient extends Accessible[SlackClient]:
-  def live: RLayer[AppConfig & ChannelFactory & EventLoopGroup, SlackClient] = (SlackClientLive.apply _).toLayer
+object SlackClient:
+  def live: RLayer[AppConfig & ChannelFactory & EventLoopGroup, SlackClient] = ZLayer.fromFunction(SlackClientLive.apply)

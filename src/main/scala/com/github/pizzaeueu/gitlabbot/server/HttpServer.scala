@@ -15,10 +15,6 @@ case class ServerLive(appConfig: AppConfig, mergeRequestController: JobControlle
   override def start: Task[ExitCode] =
     Server(mergeRequestController.build())
       .withPort(appConfig.httpServer.port)
-      //.withMaxRequestSize(10000)
-      //.make
-      //.flatMap(start => ZManaged.succeed(println(s"Server started on port: ${start.port}")))
-      //.useForever
       .start
       .forever
       .provideSomeLayer(EventLoopGroup.auto(0) ++ ServerChannelFactory.auto)

@@ -36,5 +36,5 @@ case class JobLive(
     _         <- gitLabService.assignToMr(mrInfo, assignees)
   yield (mrInfo, assignees)
 
-object Job extends Accessible[Job]:
-  def live: RLayer[AppConfig & SlackClient & GitLabService & AssigneesHandler & MessageBuilder, Job] = (JobLive.apply _).toLayer
+object Job:
+  def live: RLayer[AppConfig & SlackClient & GitLabService & AssigneesHandler & MessageBuilder, Job] = ZLayer.fromFunction(JobLive.apply)

@@ -25,6 +25,6 @@ case class RandomAssigneesHandler(appConfig: AppConfig, ref: Ref[List[Teammate]]
     util.Random.shuffle(team).take(amount)
 }
 
-object RandomAssigneesHandler extends Accessible[RandomAssigneesHandler] {
-  def randomHandler: URLayer[Ref[List[Teammate]] & AppConfig, AssigneesHandler] = (RandomAssigneesHandler.apply _).toLayer
+object RandomAssigneesHandler {
+  def randomHandler: URLayer[Ref[List[Teammate]] & AppConfig, AssigneesHandler] = ZLayer.fromFunction(RandomAssigneesHandler.apply)
 }

@@ -15,13 +15,11 @@ case class ServerLive(appConfig: AppConfig, mergeRequestController: JobControlle
   override def start: Task[ExitCode] =
     Server(mergeRequestController.build())
       .withPort(appConfig.httpServer.port)
-      .withMaxRequestSize(10000)
-      .make
-      .flatMap(start => ZManaged.succeed(println(s"Server started on port: ${start.port}")))
-      .useForever
+      .start
+      .forever
       .provideSomeLayer(EventLoopGroup.auto(0) ++ ServerChannelFactory.auto)
 }
 
-object HttpServer extends Accessible[HttpServer] {
-  def live: RLayer[AppConfig & JobController, HttpServer] = (ServerLive.apply _).toLayer
+object HttpServer {
+  def live: RLayer[AppConfig & JobController, HttpServer] = ZLayer.fromFunction(ServerLive.apply)
 }

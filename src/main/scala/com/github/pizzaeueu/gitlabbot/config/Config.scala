@@ -16,5 +16,5 @@ val appConfigDescriptor      = descriptor[AppConfig].mapKey(toKebabCase)
 
 object Config:
   def live: Layer[ReadError[String], AppConfig] = {
-    TypesafeConfig.fromTypesafeConfig[AppConfig](ConfigFactory.load(), appConfigDescriptor)
+    TypesafeConfig.fromTypesafeConfig[AppConfig](ZIO.succeed(ConfigFactory.load()), appConfigDescriptor)
   }

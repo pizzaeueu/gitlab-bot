@@ -67,5 +67,5 @@ case class GitLabClientLive(appConfig: AppConfig, factory: ChannelFactory, event
     _ <- ZIO.logInfo(s"Mr update result: $strBody")
   yield()
 
-object GitLabClient extends Accessible[GitLabClient]:
-  def live: RLayer[AppConfig & ChannelFactory & EventLoopGroup, GitLabClient] = (GitLabClientLive.apply _).toLayer
+object GitLabClient:
+  def live: RLayer[AppConfig & ChannelFactory & EventLoopGroup, GitLabClient] = ZLayer.fromFunction(GitLabClientLive.apply)

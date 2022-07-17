@@ -25,22 +25,24 @@ object Main extends ZIOAppDefault:
 
   override def run =
     printConfig.provide(Config.live, logging.removeDefaultLoggers, logging.console()) *>
-      ZIO.serviceWithZIO[HttpServer](_.start).provide(
-        JobController.live,
-        HttpServer.live,
-        Config.live,
-        Job.live,
-        GitLabClient.live,
-        GitLabService.live,
-        SlackClient.live,
-        ChannelFactory.auto,
-        EventLoopGroup.auto(),
-        RandomAssigneesHandler.randomHandler,
-        ZLayer.fromZIO(Ref.make[List[Teammate]](List.empty)),
-        MessageBuilder.live,
-        logging.removeDefaultLoggers,
-        logging.console()
-      )
+      ZIO
+        .serviceWithZIO[HttpServer](_.start)
+        .provide(
+          JobController.live,
+          HttpServer.live,
+          Config.live,
+          Job.live,
+          GitLabClient.live,
+          GitLabService.live,
+          SlackClient.live,
+          ChannelFactory.auto,
+          EventLoopGroup.auto(),
+          RandomAssigneesHandler.randomHandler,
+          ZLayer.fromZIO(Ref.make[List[Teammate]](List.empty)),
+          MessageBuilder.live,
+          logging.removeDefaultLoggers,
+          logging.console(),
+        )
 
   def printConfig: ZIO[AppConfig, IOException, Unit] = for
     _      <- ZIO.logInfo("Starting git lab bot...")

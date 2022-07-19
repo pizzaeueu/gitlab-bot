@@ -50,7 +50,7 @@ case class GitLabClientLive(appConfig: AppConfig, factory: ChannelFactory, event
     )
     _ <- ZIO.logInfo(url)
     ids = userIds.map(id => s"\"$id\"").mkString(",")
-    reqContent = HttpData.fromString(s"{\"assignee_ids\": [$ids]}")
+    reqContent = HttpData.fromString(s"{\"reviewer_ids\": [$ids]}")
     res <- Client
       .request(
         url = url,

@@ -16,7 +16,7 @@ case class RandomAssigneesHandler(appConfig: AppConfig, ref: Ref[List[Teammate]]
         appConfig.team.usernames
           .filterNot(teammates.toSet)
           .filterNot(_.username == gitLabUser.username),
-        amount = appConfig.team.amount
+        amount = appConfig.team.amount,
       )
     )
   yield assigners

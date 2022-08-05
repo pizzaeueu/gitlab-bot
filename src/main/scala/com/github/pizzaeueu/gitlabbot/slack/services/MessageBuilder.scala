@@ -20,6 +20,10 @@ case class MessageBuilderLive(appConfig: AppConfig) extends MessageBuilder {
             MarkdownText(
               s"""
                | Title: `${mrInfo.title}`
+               | Description:
+               | ```
+               | ${mrInfo.description}
+               | ```
                | <${mrInfo.url}|GitLab>
                | Labels: ${mrInfo.labels.map(lbl => s"`$lbl`").mkString(", ")}
                | Assigned to: ${teammates.map(_.username).mkString(", ")}

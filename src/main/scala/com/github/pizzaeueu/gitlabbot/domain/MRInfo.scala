@@ -7,6 +7,7 @@ case class MRInfo(
   id: Int,
   state: MrState,
   title: String,
+  description: String,
   reviewers: List[GitLabUser],
   assignees: List[GitLabUser],
   author: GitLabUser,

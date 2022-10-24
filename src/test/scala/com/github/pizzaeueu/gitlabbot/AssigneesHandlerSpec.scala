@@ -3,7 +3,7 @@ package com.github.pizzaeueu.gitlabbot
 import com.github.pizzaeueu.gitlabbot.config.*
 import com.github.pizzaeueu.gitlabbot.domain.GitLabUser
 import zio.test.*
-import zio.*
+import zio.{ZIO, *}
 import Assertion.*
 
 object AssigneesHandlerSpec extends ZIOSpecDefault {
@@ -11,12 +11,15 @@ object AssigneesHandlerSpec extends ZIOSpecDefault {
   private val randomAssigneesHandlerTestLayer: URLayer[Ref[List[Teammate]] & AppConfig, RandomAssigneesHandler] =
     ZLayer.fromFunction(RandomAssigneesHandler.apply)
 
+  private val squadAssigneesHandlerTestLayer: URLayer[Ref[List[Teammate]] & AppConfig, SquadAssigneesHandler] =
+    ZLayer.fromFunction(SquadAssigneesHandler.apply)
+
   private val teammates = List(
-    Teammate("first", 1),
-    Teammate("second", 2),
-    Teammate("third", 3),
-    Teammate("fourth", 4),
-    Teammate("fifth", 5),
+    Teammate("first", 1, Some(RiskTeam)),
+    Teammate("second", 2, Some(RiskTeam)),
+    Teammate("third", 3, Some(OpsTeam)),
+    Teammate("fourth", 4, Some(OpsTeam)),
+    Teammate("fifth", 5, Some(OpsTeam)),
   )
 
   private val appConfig = AppConfig(
@@ -28,7 +31,7 @@ object AssigneesHandlerSpec extends ZIOSpecDefault {
 
   def spec: Spec[Environment, Any] = suite("RandomAssigneesHandler")(
     test("Check that new and previous assignees are not the same") {
-      val prevAssignees = List(Teammate("third", 3), Teammate("fifth", 5))
+      val prevAssignees = List(Teammate("third", 3, Some(OpsTeam)), Teammate("fifth", 5, Some(OpsTeam)))
       val gitlabUser    = GitLabUser(username = "first", id = 1, name = "bob")
       val notAssignees  = prevAssignees :+ Teammate(gitlabUser.username, gitlabUser.id)
       val res = ZIO
@@ -39,6 +42,18 @@ object AssigneesHandlerSpec extends ZIOSpecDefault {
           ZLayer.fromZIO(Ref.make[List[Teammate]](notAssignees)),
         )
       assertZIO(res)(hasNoneOf(notAssignees))
-    }
+    } +
+      test("Check squad assignees") {
+        val gitlabUser = GitLabUser(username = "third", id = 1, name = "bob")
+        val team = teammates
+        val res = ZIO
+          .serviceWithZIO[SquadAssigneesHandler](_.chooseAssignees(gitlabUser))
+          .provide(
+            squadAssigneesHandlerTestLayer,
+            ZLayer.succeed(appConfig),
+            ZLayer.fromZIO(Ref.make[List[Teammate]](team)),
+          )
+        assertZIO(res)(hasSameElements(List(Teammate("fifth", 5, Some(OpsTeam)), Teammate("fourth", 4, Some(OpsTeam)))))
+      }
   )
 }

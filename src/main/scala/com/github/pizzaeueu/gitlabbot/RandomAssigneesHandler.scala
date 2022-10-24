@@ -1,6 +1,6 @@
 package com.github.pizzaeueu.gitlabbot
 
-import com.github.pizzaeueu.gitlabbot.config.{AppConfig, Teammate}
+import com.github.pizzaeueu.gitlabbot.config.{AppConfig, Teammate, Unknown}
 import com.github.pizzaeueu.gitlabbot.domain.GitLabUser
 import zio.*
 
@@ -16,7 +16,7 @@ case class RandomAssigneesHandler(appConfig: AppConfig, ref: Ref[List[Teammate]]
         appConfig.team.usernames
           .filterNot(teammates.toSet)
           .filterNot(_.username == gitLabUser.username),
-        amount = appConfig.team.amount
+        amount = appConfig.team.amount,
       )
     )
   yield assigners

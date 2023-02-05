@@ -1,6 +1,6 @@
 import sbt.Keys.libraryDependencies
 
-ThisBuild / scalaVersion := "3.1.3"
+ThisBuild / scalaVersion := "3.2.2"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 

@@ -4,7 +4,7 @@ import com.github.pizzaeueu.gitlabbot.config.AppConfig
 import zhttp.service.{ChannelFactory, Client, EventLoopGroup}
 import zio.*
 import com.github.pizzaeueu.gitlabbot.config.*
-import zhttp.http.{Headers, HttpData, Method}
+import zhttp.http.{Headers, Body, Method}
 
 trait SlackClient:
   def sendMessage(message: String): Task[Unit]
@@ -23,13 +23,13 @@ case class SlackClientLive(appConfig: AppConfig, factory: ChannelFactory, eventL
         url = url,
         headers = headers,
         method = Method.POST,
-        content = HttpData.fromString(message),
+        content = Body.fromString(message),
       )
       .provide(
         ZLayer.succeed(factory),
         ZLayer.succeed(eventLoopGroup),
       )
-    out <- res.bodyAsString
+    out <- res.body.asString
     _   <- ZIO.logInfo(s"Message Sent response: $out")
     _   <- ZIO.logInfo("Message was successfully sent")
   yield ()

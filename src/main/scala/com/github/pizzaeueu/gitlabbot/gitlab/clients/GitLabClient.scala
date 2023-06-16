@@ -7,7 +7,7 @@ import MRInfo.*
 import com.github.pizzaeueu.gitlabbot.config.AppConfig
 import zhttp.http.Headers
 import zhttp.http.Method
-import zhttp.http.HttpData
+import zhttp.http.Body
 import zhttp.service.{ChannelFactory, Client, EventLoopGroup}
 import zio.*
 import zio.json.*
@@ -33,7 +33,7 @@ case class GitLabClientLive(appConfig: AppConfig, factory: ChannelFactory, event
         ZLayer.succeed(factory),
         ZLayer.succeed(eventLoopGroup),
       )
-    dataEither <- res.bodyAsString.map(_.fromJson[List[MRInfo]])
+    dataEither <- res.body.asString.map(_.fromJson[List[MRInfo]])
     data <- ZIO.fromEither(dataEither).mapError(err => new RuntimeException(err))
     _ <- ZIO.logInfo(s"Mrs list successfully loaded")
   yield data
@@ -50,7 +50,7 @@ case class GitLabClientLive(appConfig: AppConfig, factory: ChannelFactory, event
     )
     _ <- ZIO.logInfo(url)
     ids = userIds.map(id => s"\"$id\"").mkString(",")
-    reqContent = HttpData.fromString(s"{\"reviewer_ids\": [$ids]}")
+    reqContent = Body.fromString(s"{\"reviewer_ids\": [$ids]}")
     res <- Client
       .request(
         url = url,
@@ -63,7 +63,7 @@ case class GitLabClientLive(appConfig: AppConfig, factory: ChannelFactory, event
         ZLayer.succeed(eventLoopGroup),
       )
     _ <- ZIO.logDebug(s"Request: url: $url, content: $reqContent")
-    strBody <- res.bodyAsString
+    strBody <- res.body.asString
     _ <- ZIO.logInfo(s"Mr update result: $strBody")
   yield()
 

@@ -13,9 +13,9 @@ trait GitLabService:
 
   def assignToMr(MRInfo: MRInfo, userIds: List[Teammate]): Task[Unit]
 
-case class GitLabServiceLive(appConfig: AppConfig, client: GitLabClient) extends GitLabService:
+case class GitLabServiceLive(appConfig: AppConfig, client: GitLabClient, teamService: TeamService) extends GitLabService:
   override def getMrsList(): Task[List[MRInfo]] =
-    val jobs = combinations(appConfig.gitLab.projects, appConfig.team.usernames.map(_.username)).map { case (project, user) =>
+    val jobs = teamService.getAllMrToLoad.map { case (project, user) =>
       client.loadMrsList(project, user)
     }
     for
@@ -38,4 +38,4 @@ case class GitLabServiceLive(appConfig: AppConfig, client: GitLabClient) extends
     !mr.title.toLowerCase.startsWith("draft") && mr.state == MrState.opened
 
 object GitLabService:
-  def live: RLayer[AppConfig & GitLabClient, GitLabService] = ZLayer.fromFunction(GitLabServiceLive.apply)
+  def live: RLayer[AppConfig & GitLabClient & TeamService, GitLabService] = ZLayer.fromFunction(GitLabServiceLive.apply)

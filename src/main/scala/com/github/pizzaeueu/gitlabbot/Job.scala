@@ -2,7 +2,7 @@ package com.github.pizzaeueu.gitlabbot
 
 import com.github.pizzaeueu.gitlabbot.config.{AppConfig, Teammate}
 import com.github.pizzaeueu.gitlabbot.domain.MRInfo
-import com.github.pizzaeueu.gitlabbot.gitlab.services.GitLabService
+import com.github.pizzaeueu.gitlabbot.gitlab.services.{GitLabService, TeamService}
 import com.github.pizzaeueu.gitlabbot.slack.clients.SlackClient
 import com.github.pizzaeueu.gitlabbot.slack.services.MessageBuilder
 import com.github.pizzaeueu.gitlabbot.config.*
@@ -20,6 +20,7 @@ case class JobLive(
   gitLabService: GitLabService,
   assigneesHandler: AssigneesHandler,
   messageBuilder: MessageBuilder,
+  teamService: TeamService,
 ) extends Job:
   override def assignFreeMrs: Task[Unit] = for
     _   <- ZIO.logInfo("Starting job")
@@ -32,9 +33,16 @@ case class JobLive(
   yield ()
 
   private def assign(mrInfo: MRInfo): Task[(MRInfo, List[Teammate])] = for
-    assignees <- assigneesHandler.chooseAssignees(mrInfo.author)
+    team <- ZIO
+      .fromOption {
+        teamService.getTeamByProjectId(mrInfo.projectId)
+      }
+      .mapError(_ => new RuntimeException(s"Team wasn't found for project ${mrInfo.projectId}"))
+    teamExceptAuthor = team.usernames.filter(_.gitlabId != mrInfo.author.id)
+    assignees <- assigneesHandler.chooseAssignees(teamExceptAuthor, team.amount)
     _         <- gitLabService.assignToMr(mrInfo, assignees)
   yield (mrInfo, assignees)
 
 object Job:
-  def live: RLayer[AppConfig & SlackClient & GitLabService & AssigneesHandler & MessageBuilder, Job] = ZLayer.fromFunction(JobLive.apply)
+  def live: RLayer[AppConfig & SlackClient & GitLabService & AssigneesHandler & MessageBuilder & TeamService, Job] =
+    ZLayer.fromFunction(JobLive.apply)

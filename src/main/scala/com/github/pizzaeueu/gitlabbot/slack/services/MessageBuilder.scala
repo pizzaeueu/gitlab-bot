@@ -19,14 +19,14 @@ case class MessageBuilderLive(appConfig: AppConfig) extends MessageBuilder {
           SectionBlock(
             MarkdownText(
               s"""
+               | Assigned to: ${teammates.map(_.username).mkString(", ")}
                | Title: `${mrInfo.title}`
+               |  <${mrInfo.url}|GitLab>
                | Description:
                | ```
                | ${mrInfo.description}
                | ```
-               | <${mrInfo.url}|GitLab>
                | Labels: ${mrInfo.labels.map(lbl => s"`$lbl`").mkString(", ")}
-               | Assigned to: ${teammates.map(_.username).mkString(", ")}
                |""".stripMargin
             )
           ),

@@ -5,7 +5,7 @@ import zio.config.typesafe.*
 import TypesafeConfigSource.*
 import com.github.pizzaeueu.gitlabbot.config.{AppConfig, Config, Teammate}
 import com.github.pizzaeueu.gitlabbot.gitlab.clients.GitLabClient
-import com.github.pizzaeueu.gitlabbot.gitlab.services.GitLabService
+import com.github.pizzaeueu.gitlabbot.gitlab.services.{GitLabService, TeamService}
 import com.github.pizzaeueu.gitlabbot.server.HttpServer
 import com.github.pizzaeueu.gitlabbot.server.controllers.JobController
 import com.github.pizzaeueu.gitlabbot.slack.clients.SlackClient
@@ -24,23 +24,26 @@ import java.io.IOException
 object Main extends ZIOAppDefault:
 
   override def run =
-    printConfig.provide(Config.live, logging.removeDefaultLoggers, logging.console()) *>
-      ZIO.serviceWithZIO[HttpServer](_.start).provide(
-        JobController.live,
-        HttpServer.live,
-        Config.live,
-        Job.live,
-        GitLabClient.live,
-        GitLabService.live,
-        SlackClient.live,
-        ChannelFactory.auto,
-        EventLoopGroup.auto(),
-        RandomAssigneesHandler.randomHandler,
-        ZLayer.fromZIO(Ref.make[List[Teammate]](List.empty)),
-        MessageBuilder.live,
-        logging.removeDefaultLoggers,
-        logging.console()
-      )
+    printConfig.provide(Config.live, logging.removeDefaultLoggers, logging.consoleLogger()) *>
+      ZIO
+        .serviceWithZIO[HttpServer](_.start)
+        .provide(
+          JobController.live,
+          HttpServer.live,
+          Config.live,
+          Job.live,
+          GitLabClient.live,
+          GitLabService.live,
+          SlackClient.live,
+          ChannelFactory.auto,
+          EventLoopGroup.auto(),
+          RandomAssigneesHandler.randomHandler,
+          ZLayer.fromZIO(Ref.make[List[Teammate]](List.empty)),
+          MessageBuilder.live,
+          TeamService.live,
+          logging.removeDefaultLoggers,
+          logging.consoleLogger(),
+        )
 
   def printConfig: ZIO[AppConfig, IOException, Unit] = for
     _      <- ZIO.logInfo("Starting git lab bot...")

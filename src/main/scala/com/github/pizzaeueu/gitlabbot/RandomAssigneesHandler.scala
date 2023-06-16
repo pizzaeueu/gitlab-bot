@@ -7,24 +7,20 @@ import zio.*
 import scala.annotation.tailrec
 import scala.util
 
-case class RandomAssigneesHandler(appConfig: AppConfig, ref: Ref[List[Teammate]]) extends AssigneesHandler {
+case class RandomAssigneesHandler(ref: Ref[List[Teammate]]) extends AssigneesHandler {
 
-  override def chooseAssignees(gitLabUser: GitLabUser): Task[List[Teammate]] = for
+  override def chooseAssignees(teammates: List[Teammate], amount: Int): Task[List[Teammate]] = for
     _ <- ZIO.logInfo("Choosing assigners")
-    assigners <- ref.updateAndGet(teammates =>
-      getRandomAssignees(
-        appConfig.team.usernames
-          .filterNot(teammates.toSet)
-          .filterNot(_.username == gitLabUser.username),
-        amount = appConfig.team.amount
-      )
+    assigners <- getRandomAssignees(
+      teammates,
+      amount = amount,
     )
   yield assigners
 
-  private def getRandomAssignees(team: List[Teammate], amount: Int): List[Teammate] =
-    util.Random.shuffle(team).take(amount)
+  private def getRandomAssignees(team: List[Teammate], amount: Int) =
+    ZIO.succeed { util.Random.shuffle(team).take(amount) }
 }
 
 object RandomAssigneesHandler {
-  def randomHandler: URLayer[Ref[List[Teammate]] & AppConfig, AssigneesHandler] = ZLayer.fromFunction(RandomAssigneesHandler.apply)
+  def randomHandler: URLayer[Ref[List[Teammate]], AssigneesHandler] = ZLayer.fromFunction(RandomAssigneesHandler.apply)
 }

@@ -6,5 +6,5 @@ import com.github.pizzaeueu.gitlabbot.config.*
 import zio.*
 
 trait AssigneesHandler {
-  def chooseAssignees(gitLabUser: GitLabUser): Task[List[Teammate]]
+  def chooseAssignees(teammates: List[Teammate], amount: Int): Task[List[Teammate]]
 }

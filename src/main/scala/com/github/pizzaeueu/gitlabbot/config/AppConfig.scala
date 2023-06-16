@@ -4,5 +4,5 @@ final case class AppConfig(
   httpServer: HttpServerConfig,
   slack: SlackConfig,
   gitLab: GitLabConfig,
-  team: TeamConfig,
+  team: List[TeamConfig],
 )

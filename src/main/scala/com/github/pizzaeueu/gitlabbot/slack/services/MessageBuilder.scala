@@ -12,8 +12,7 @@ trait MessageBuilder {
 }
 
 case class MessageBuilderLive(appConfig: AppConfig) extends MessageBuilder {
-  override def buildMrAssignmentMessage(assignees: List[(MRInfo, List[Teammate])]): Task[SlackMessage] = for
-    blocks <- ZIO.succeed(
+  override def buildMrAssignmentMessage(assignees: List[(MRInfo, List[Teammate])]): Task[SlackMessage] = for blocks <- ZIO.succeed(
       assignees.flatMap { case (mrInfo, teammates) =>
         List(
           SectionBlock(

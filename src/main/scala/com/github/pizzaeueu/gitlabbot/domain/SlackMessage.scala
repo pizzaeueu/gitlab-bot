@@ -7,7 +7,7 @@ enum BlockType:
   case section, divider
 
 enum TextType:
-  case mrkdwn extends TextType
+  case mrkdwn     extends TextType
   case plain_text extends TextType
 
 sealed abstract class Text(val `type`: TextType) {

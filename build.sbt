@@ -15,5 +15,5 @@ lazy val root = (project in file("."))
     libraryDependencies += "dev.zio" %% "zio-logging"         % "2.1.13",
     libraryDependencies += "io.d11"  %% "zhttp"               % "2.0.0-RC11",
     libraryDependencies += "dev.zio" %% "zio-json"            % "0.5.0",
-    libraryDependencies += ("com.evolutiongaming" %% "crypto" % "2.0.1").cross(CrossVersion.for3Use2_13),
+    libraryDependencies += ("com.evolutiongaming" %% "crypto" % "2.1.0").cross(CrossVersion.for3Use2_13),
   )

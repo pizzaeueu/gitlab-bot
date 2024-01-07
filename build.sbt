@@ -6,9 +6,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val root = (project in file("."))
   .settings(
-    libraryDependencies += "dev.zio" %% "zio"                 % "2.0.15",
-    libraryDependencies += "dev.zio" %% "zio-test-sbt"        % "2.0.15" % Test,
-    libraryDependencies += "dev.zio" %% "zio-test"            % "2.0.15" % Test,
+    libraryDependencies += "dev.zio" %% "zio"                 % "2.0.21",
+    libraryDependencies += "dev.zio" %% "zio-test-sbt"        % "2.0.21" % Test,
+    libraryDependencies += "dev.zio" %% "zio-test"            % "2.0.21" % Test,
     libraryDependencies += "dev.zio" %% "zio-config"          % "3.0.7",
     libraryDependencies += "dev.zio" %% "zio-config-magnolia" % "3.0.7",
     libraryDependencies += "dev.zio" %% "zio-config-typesafe" % "3.0.7",
